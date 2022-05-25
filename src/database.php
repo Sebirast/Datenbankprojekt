@@ -45,19 +45,26 @@ class Database {
      *  - email
      *  - register_date
      */
-    private function create_user_table() {
+    private function create_person_table() {
         // here: create table if not exist.
         try {
             $conn = $this->create_connection();
             if (!$this->check_if_table_exist($conn, 'user')) {
                 // sql to create table
-                $sql = "CREATE TABLE user (
-                    user_id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                    username VARCHAR(40) NOT NULL,
-                    password VARCHAR(160) NOT NULL,
-                    email VARCHAR(60),
-                    register_date TIMESTAMP )";
+                $sql = "CREATE TABLE person (
+                        person_id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                        surname VARCHAR(40) NOT NULL,
+                        firstname VARCHAR(40) NOT NULL,
+                        nickname VARCHAR(40),
+                        password VARCHAR(40) NOT NULL,
+                        email VARCHAR(60) NOT NULL,
+                        birthdate DATE,
+                        register_date TIMESTAMP )";
                 // use exec() because no results are returned
+                $sql = "ALTER TABLE person
+                        ADD FOREIGN KEY (function) REFRENCES function(FunctionID)
+                        ";
+                
                 $conn->exec($sql);
                 echo "user table created successfully";
             } else {
@@ -70,12 +77,12 @@ class Database {
     }
 
     public function prepare_login() {
-        $this->create_user_table();
+        $this->create_person_table();
         return true;
     }
 
     public function prepare_registration() {
-        $this->create_user_table();
+        $thisperson_idcreate_person_table();
         return true;
     }
 
