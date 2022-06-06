@@ -12,7 +12,10 @@ if (!$database->prepare_registration()) {
     return false;
 }
 
-if (!isset($_GET['username']) || !isset($_GET['password'])) {
+if (!isset($_GET['surname']) || !isset($_GET['firstname']) 
+    || !isset($_GET['email']) || !isset($_GET['birthdate']) 
+    || !isset($_GET['participantFunction']) || !isset($_GET['status']) 
+    || !isset($_GET['preoccupation'])){
     $register["success"] = false;
     $register["message"] = "Parameter fehlen.";
     echo json_encode($register);
