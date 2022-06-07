@@ -14,7 +14,7 @@ class Database {
     /**
      * Creates a simple database-connection.
      *
-     * @return PDO
+     * @return PDO   
      */
     private function create_connection() {
         $conn = new PDO("mysql:host=$this->host;dbname=$this->db", $this->user, $this->password);
@@ -67,8 +67,8 @@ class Database {
                         registerDate TIMESTAMP,
                         participantFunctionID int(11) UNSIGNED,
                         statusID int(11) UNSIGNED,
-                        preoccupationID int(11) UNSIGNED
-                        -- teamID int
+                        preoccupationID int(11) UNSIGNED,
+                        teamID int(11) UNSIGNED
                         )";
 
                 // use exec() because no results are returned
@@ -78,8 +78,8 @@ class Database {
                 $sql = "ALTER TABLE person
                         ADD FOREIGN KEY (participantFunctionID) REFERENCES participantFunction(functionID),
                         ADD FOREIGN KEY (statusID) REFERENCES status(statusID),
-                        ADD FOREIGN KEY (preoccupationID) REFERENCES preoccupation(preoccupationID)
-                        -- ADD FOREIGN KEY (team) REFERENCES team(teamID)
+                        ADD FOREIGN KEY (preoccupationID) REFERENCES preoccupation(preoccupationID),
+                        ADD FOREIGN KEY (teamID) REFERENCES team(teamID)
                         ";
 
                 $conn->exec($sql);
@@ -199,12 +199,35 @@ class Database {
         $conn = null;
     }
 
+    private function create_team_table() {
+        try {
+            $conn = $this->create_connection();
+            if(!$this->check_if_table_exist($conn, "team")) {
+                $sql = "CREATE TABLE team (
+                        teamID int(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                        teamName VARCHAR(40),
+                        teamNation VARCHAR(40)
+                    )";
+
+                $conn->exec($sql);
+
+                echo "team table was created successfully";
+            }
+        }
+        catch(PDOException $e) {
+            echo $e->getMessage();
+        }
+        $conn = null;
+    }
+
     public function prepare_database() {
         $this->create_placeOfWork_table();
         $this->create_preoccupation_table();
         $this->create_participantFunction_table();
         $this->create_status_table();
+        $this->create_team_table();
         $this->create_person_table();
+        return true;
     }
 
     public function prepare_registration() {
@@ -212,7 +235,7 @@ class Database {
         return true;
     }
 
-    public function register_participant($username, $password, $email=null) {
+    public function register_participant($username, $password, $email, $dateOfBirth, $nickname=null, $pariticipantFunction, $status, $preoccupation) {
         // here: insert a new user into the database.
         // @todo: check if username is free.
         try {
