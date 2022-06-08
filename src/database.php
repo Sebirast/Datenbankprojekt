@@ -235,17 +235,16 @@ class Database {
         return true;
     }
 
-    public function register_participant($username, $password, $email, $dateOfBirth, $nickname=null, $pariticipantFunction, $status, $preoccupation) {
+    public function register_participant($firstname, $surname, $email, $dateOfBirth, $nickname=null, $pariticipantFunction, $status, $preoccupation, $placeOfWork) {
         // here: insert a new user into the database.
         // @todo: check if username is free.
         try {
             $conn = $this->create_connection();
 
-            $sql = 'INSERT INTO user(username, password, email, register_date)
-            VALUES(?, ?, ?, NOW())';
+            $sql = 'INSERT INTO user(surname, firstname, nickname, email, birthDate, registerDate, participantFunction, status, preoccupation, team)
+            VALUES(?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?)';
             $statement = $conn->prepare($sql);
-            $password_hash = password_hash($password, PASSWORD_DEFAULT);
-            $statement->execute([$username, $password_hash, $email]);
+            $statement->execute([$surname, $firstname, $nickname, $email, $birthDate, $registerDate, $participantFunctionID, $statusID, $preoccupationID, $teamID]);
             return true;
         } catch (PDOException $e) {
             echo $e->getMessage();
